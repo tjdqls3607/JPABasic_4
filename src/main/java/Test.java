@@ -43,8 +43,8 @@ public class Test {
 
 
 		// #1 ~ #3 으로 이전 프로젝트의 insert, update, select sql 문 수행 확인
-		// #1. persist
-		// 현재 테이블에 없는 객체를 생성한 후 객체의 내용을 테이블에 반영 (insert)
+//		 #1. persist
+//		 현재 테이블에 없는 객체를 생성한 후 객체의 내용을 테이블에 반영 (insert)
 //		{
 //			Employee e = new Employee();
 //			e.setId(2);
@@ -96,15 +96,31 @@ public class Test {
 		// #4. remove
 		// Hibernate: create table employee (id integer not null, address varchar(255), name varchar(255), primary key (id)) engine=InnoDB
 		// Hibernate: select e1_0.id,e1_0.address,e1_0.name from employee e1_0 where e1_0.id=?
-		{
-			Employee e = em.find(Employee.class, 2);	// 삭제 대상 영속화
-			em.remove(e);	//( 이 시점에 삭제 X)
+//		{
+//			Employee e = em.find(Employee.class, 2);	// 삭제 대상 영속화
+//			em.remove(e);	//( 이 시점에 삭제 X)
+//
+//			try{
+//				Thread.sleep(3000);
+//			} catch (Exception ee) {
+//				ee.printStackTrace();
+//			}
+//		}
 
-			try{
-				Thread.sleep(3000);
-			} catch (Exception ee) {
-				ee.printStackTrace();
-			}
+//		#1. persist & find
+//		현재 영속화 되어 있는 객체를 find()
+//		find() 는 대상이 이미 영속화 되어 있으면 테이블에서 조회하지 않음
+
+		{
+			Employee e = new Employee();
+			e.setId(3);
+			e.setName("삼길동");
+			e.setAddress("제주 어디");
+
+			em.persist(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
+
+			Employee e2 = em.find(Employee.class, 3);	// 아직 insert 되지 않은 삼길동 데이터를 find() 한다.
+			System.out.println(e2);
 		}
 		em.getTransaction().commit();  // 이 시점에 테이블에 반영한다.
 
