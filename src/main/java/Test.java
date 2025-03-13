@@ -12,9 +12,23 @@ public class Test {
 	public static void main(String[] args) {
 		// EntityManager <= EntityManagerFactory
 		// src/main/resources/META-INF/persitence.xml
+
 		Map<String, String> props = new HashMap<>();
 		props.put("hibernate.show_sql","true");
-		props.put("hibernate.hbm2ddl.auto","true");
+		props.put("hibernate.hbm2ddl.auto","create");	// create : drop & create, update : 있으면 안만들고 없으면 만든다.
+
+		/*
+		create
+		Hibernate : drop table if exists employee
+		Hibernate: create table employee (id integer not null, address varchar(255), name varchar(255), primary key (id)) engine=InnoDB
+		 */
+
+		/*
+		update
+		테이블이 있으면 아무런 작업X
+		테이블이 없으면
+		hibernate: create table employee (id integer not null, address varchar(255), name varchar(255), primary key (id)) engine=InnoDB
+		 */
 
 		EntityManagerFactory emf = new HibernatePersistenceProvider().createContainerEntityManagerFactory(
 				new MyPersistenceUnitInfo(), props
@@ -27,6 +41,8 @@ public class Test {
 		// class   - table 
 		// Employee - employee
 
+
+		// #1 ~ #3 으로 이전 프로젝트의 insert, update, select sql 문 수행 확인
 		// #1. persist
 		// 현재 테이블에 없는 객체를 생성한 후 객체의 내용을 테이블에 반영 (insert)
 //		{
@@ -36,8 +52,6 @@ public class Test {
 //			e.setAddress("서울 어디");
 //
 //			em.persist(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
-//
-//			e.setAddress("경기 어디");
 //		}
 
 		// #2. find
@@ -67,13 +81,30 @@ public class Test {
 //			em.merge(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
 
 			// 테이블에 있는 경우 (update)
-			Employee e = new Employee();
-			e.setId(1);
-			e.setName("홍길동2");
-			e.setAddress("창원 어디");
+//			Employee e = new Employee();
+//			e.setId(1);
+//			e.setName("홍길동2");
+//			e.setAddress("창원 어디");
+//
+//			em.merge(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
 
-			em.merge(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
+		}
 
+		// create, update 테스트 후 데이터 없다.
+		// #1. insert 수행
+
+		// #4. remove
+		// Hibernate: create table employee (id integer not null, address varchar(255), name varchar(255), primary key (id)) engine=InnoDB
+		// Hibernate: select e1_0.id,e1_0.address,e1_0.name from employee e1_0 where e1_0.id=?
+		{
+			Employee e = em.find(Employee.class, 2);	// 삭제 대상 영속화
+			em.remove(e);	//( 이 시점에 삭제 X)
+
+			try{
+				Thread.sleep(3000);
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
 		}
 		em.getTransaction().commit();  // 이 시점에 테이블에 반영한다.
 
