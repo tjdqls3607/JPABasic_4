@@ -1,18 +1,16 @@
 package config;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariDataSource;
-
 import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.ValidationMode;
 import jakarta.persistence.spi.ClassTransformer;
 import jakarta.persistence.spi.PersistenceUnitInfo;
 import jakarta.persistence.spi.PersistenceUnitTransactionType;
+
+import javax.sql.DataSource;
+import java.net.URL;
+import java.util.List;
+import java.util.Properties;
 
 public class MyPersistenceUnitInfo implements PersistenceUnitInfo{
 

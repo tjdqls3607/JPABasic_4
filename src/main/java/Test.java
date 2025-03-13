@@ -1,19 +1,23 @@
-import java.util.HashMap;
-
-import org.hibernate.jpa.HibernatePersistenceProvider;
-
 import config.MyPersistenceUnitInfo;
 import entity.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.jpa.HibernatePersistenceProvider;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Test {
 
 	public static void main(String[] args) {
 		// EntityManager <= EntityManagerFactory
 		// src/main/resources/META-INF/persitence.xml
+		Map<String, String> props = new HashMap<>();
+		props.put("hibernate.show_sql","true");
+		props.put("hibernate.hbm2ddl.auto","true");
+
 		EntityManagerFactory emf = new HibernatePersistenceProvider().createContainerEntityManagerFactory(
-				new MyPersistenceUnitInfo(), new HashMap<>()
+				new MyPersistenceUnitInfo(), props
 		); // my persistence unit
 		EntityManager em = emf.createEntityManager();
 
@@ -30,9 +34,9 @@ public class Test {
 //			e.setId(2);
 //			e.setName("이길동");
 //			e.setAddress("서울 어디");
-//			
+//
 //			em.persist(e); // 영속화 ( 이 시점에 insert 되지 않는다. )
-//			
+//
 //			e.setAddress("경기 어디");
 //		}
 
